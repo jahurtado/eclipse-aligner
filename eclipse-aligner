@@ -1,0 +1,36 @@
+#!/bin/sh
+# The command, straight from a clone, with no environment to think about.
+#
+#     ./eclipse-aligner --help
+#     ./eclipse-aligner detect CLIP --method circle
+#     ./eclipse-aligner gui    CLIP
+#     ./eclipse-aligner apply  CLIP
+#
+# It is the same command that `uv pip install -e .` puts on the PATH; this file
+# only saves having to build or activate anything first. `uv run` does the
+# work -- it syncs the environment on demand -- and every argument is passed
+# straight through, so anything the command accepts works here unchanged.
+#
+# It runs `python -m eclipse_aligner` rather than the installed script of the
+# same name: this file *is* called eclipse-aligner, and a PATH with `.` on it
+# would otherwise send it round in circles.
+#
+# The `gui` extra is asked for only when something actually wants the editor,
+# so a headless detect or apply still does not drag matplotlib in.
+set -e
+here=$(cd "$(dirname "$0")" && pwd)
+
+extra=
+[ "$1" = "gui" ] && extra="--extra gui"
+for a in "$@"; do
+    [ "$a" = "--gui" ] && extra="--extra gui"
+done
+
+if command -v uv >/dev/null 2>&1; then
+    exec uv run --project "$here" $extra python -m eclipse_aligner "$@"
+elif [ -x "$here/.venv/bin/python" ]; then
+    exec "$here/.venv/bin/python" -m eclipse_aligner "$@"
+else
+    echo "eclipse-aligner: needs uv (https://docs.astral.sh/uv/), or a .venv" >&2
+    exit 1
+fi

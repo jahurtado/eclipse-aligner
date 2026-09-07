@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+*.exr
+alignment.json
+.vscode/
+*.egg-info/
+build/
+dist/
+
+# The desktop bundles and their wrappers -- the macOS .app/.dmg and the Windows
+# folder/.zip/setup.exe: all built from packaging/, none kept.
+packaging/build/
+packaging/dist/
+
+# Finder metadata: window geometry, of no use to anyone and never wanted here.
+.DS_Store
